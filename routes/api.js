@@ -18,7 +18,15 @@ module.exports = app => {
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
       try {
-        const bookList = await Book.find();
+        const rawBookList = await Book.find();
+        const bookList = rawBookList.map(book => {
+          const { _id, title, comments } = book;
+          return {
+            _id,
+            title,
+            commentcount: comments.length
+          };
+        });
         res.send(bookList);
       } catch (e) {
         res.status(400).send(e);
