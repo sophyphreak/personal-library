@@ -5,7 +5,7 @@ const Book = mongoose.model('Book', {
     type: String,
     required: true
   },
-  comments: [{ body: String }]
+  comments: [String]
 });
 
 module.exports = {
