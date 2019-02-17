@@ -17,9 +17,6 @@
 		"zombie": "^5.0.5",
 		"helmet": "^3.1.0"
 	},
-	"engines": {
-		"node": "4.4.3"
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://hyperdev.com/#!/project/welcome-project"
