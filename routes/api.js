@@ -9,39 +9,84 @@
 'use strict';
 
 require('../db/mongoose');
+const { Book } = require('../models/book');
 
 module.exports = app => {
   app
     .route('/api/books')
-    .get((req, res) => {
+    .get(async (req, res) => {
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+      try {
+        const bookList = await Book.find();
+        res.send(bookList);
+      } catch (e) {
+        res.status(400).send(e);
+      }
     })
 
-    .post((req, res) => {
-      var title = req.body.title;
+    .post(async (req, res) => {
+      try {
+        const title = req.body.title;
+        const book = new Book({ title });
+        const doc = await book.save();
+        res.send(doc);
+      } catch (e) {
+        res.status(400).send(e);
+      }
       //response will contain new book object including atleast _id and title
     })
 
-    .delete((req, res) => {
+    .delete(async (req, res) => {
+      try {
+        const docsDeleted = await Book.deleteMany();
+        res.send(`deleted ${docsDeleted} books`);
+      } catch (e) {
+        res.status(400).send(e);
+      }
       //if successful response will be 'complete delete successful'
     });
 
   app
     .route('/api/books/:id')
-    .get((req, res) => {
-      var bookid = req.params.id;
+    .get(async (req, res) => {
+      try {
+        const id = req.params.id;
+        const book = await Book.findById(id);
+        res.send(book);
+      } catch (e) {
+        res.status(400).send(e);
+      }
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
 
-    .post((req, res) => {
-      var bookid = req.params.id;
-      var comment = req.body.comment;
+    .post(async (req, res) => {
+      try {
+        const id = req.params.id;
+        const newComment = req.body.comment;
+        let book = await Book.findById(id);
+        book.comments.push(newComment);
+        await book.save();
+        res.send(book);
+      } catch (e) {
+        res.status(400).send(e);
+      }
       //json res format same as .get
     })
 
-    .delete((req, res) => {
-      var bookid = req.params.id;
+    .delete(async (req, res) => {
+      try {
+        var bookid = req.params.id;
+        if (!id) res.send('_id error');
+        const found = await Book.findByIdAndDelete(id);
+        if (found) {
+          res.send(`deleted ${id}`);
+        } else {
+          res.send(`could not delete ${id}`);
+        }
+      } catch (e) {
+        res.status(400).send(e);
+      }
       //if successful response will be 'delete successful'
     });
 };
