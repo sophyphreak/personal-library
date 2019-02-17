@@ -63,10 +63,12 @@ module.exports = app => {
     .post(async (req, res) => {
       try {
         const id = req.params.id;
-        const newComment = req.body.comment;
-        let book = await Book.findById(id);
-        book.comments.push(newComment);
-        await book.save();
+        const comment = req.body.comment;
+        const book = await Book.findByIdAndUpdate(
+          id,
+          { $push: { comments: comment } },
+          { new: true }
+        );
         res.send(book);
       } catch (e) {
         res.status(400).send(e);
