@@ -36,6 +36,7 @@ module.exports = app => {
     .post(async (req, res) => {
       try {
         const title = req.body.title;
+        if (!title) throw 'Add book failed. Please include title.';
         const book = new Book({ title });
         const doc = await book.save();
         res.send(doc);
