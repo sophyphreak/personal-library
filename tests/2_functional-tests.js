@@ -72,6 +72,10 @@ suite('Functional Tests', () => {
             })
             .end((err, res) => {
               assert.equal(res.status, 400);
+              assert.equal(
+                res.body.message,
+                'Add book failed. Please include title.'
+              );
               done();
             });
         });
@@ -113,11 +117,14 @@ suite('Functional Tests', () => {
           .get('/api/books/0000000')
           .end((err, res) => {
             assert.equal(res.status, 400);
+            assert.equal(res.body.name, 'CastError');
             done();
           });
       });
 
       test('Test GET /api/books/[id] with valid id in db', done => {
+        const book = Book.findOne({ title: 'The Alchemsdfist' });
+        // console.log(book);
         done();
       });
     });
