@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 if (process.env.NODE_ENV === 'test') {
-  mongoose.connect(`mongodb://localhost:27017/personalLibraryTest`);
+  mongoose.connect(`mongodb://localhost:27017/personalLibraryTest`, {
+    useNewUrlParser: true
+  });
 } else {
   const mongoDB = `mongodb://${process.env.DB_USER}:${
     process.env.DB_PASS
