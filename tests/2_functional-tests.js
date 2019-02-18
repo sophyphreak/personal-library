@@ -140,8 +140,28 @@ suite('Functional Tests', () => {
     suite(
       'POST /api/books/[id] => add comment/expect book object with id',
       () => {
-        test('Test POST /api/books/[id] with comment', done => {
-          done();
+        test('Test POST /api/books/[id] with comment', async () => {
+          const book = await Book.findOne({ title: 'The Alchemist' });
+          const id = book._id;
+          chai
+            .request(server)
+            .post(`/api/books/${id}`)
+            .type('form')
+            .send({
+              _method: 'post',
+              comment: 'Imma new comment'
+            })
+            .end((err, res) => {
+              assert.equal(res.status, 200);
+              assert.equal(res.body.title, 'The Alchemist');
+              assert.isArray(res.body.comments, 'comments should be an array');
+              assert.equal(res.body.comments.length, 3, 'should be 3 comments');
+              assert.equal(
+                res.body.comments[2],
+                'Imma new comment',
+                '3rd comment should equal new comment'
+              );
+            });
         });
       }
     );
