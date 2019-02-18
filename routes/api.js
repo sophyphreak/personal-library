@@ -73,6 +73,7 @@ module.exports = app => {
       try {
         const id = req.params.id;
         const comment = req.body.comment;
+        if (!comment) throw { message: 'Comment not found' };
         const book = await Book.findByIdAndUpdate(
           id,
           { $push: { comments: comment } },
@@ -87,13 +88,13 @@ module.exports = app => {
 
     .delete(async (req, res) => {
       try {
-        var bookid = req.params.id;
+        var id = req.params.id;
         if (!id) res.send('_id error');
         const found = await Book.findByIdAndDelete(id);
         if (found) {
-          res.send(`deleted ${id}`);
+          res.send('delete successsful');
         } else {
-          res.send(`could not delete ${id}`);
+          throw { message: `no book exists at ${id}` };
         }
       } catch (e) {
         res.status(400).send(e);
