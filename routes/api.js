@@ -1,11 +1,3 @@
-/*
- *
- *
- *       Complete the API routing below
- *
- *
- */
-
 'use strict';
 
 require('../db/mongoose');
@@ -15,8 +7,6 @@ module.exports = app => {
   app
     .route('/api/books')
     .get(async (req, res) => {
-      //response will be array of book objects
-      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
       try {
         const rawBookList = await Book.find();
         const bookList = rawBookList.map(book => {
@@ -43,7 +33,6 @@ module.exports = app => {
       } catch (e) {
         res.status(400).send(e);
       }
-      //response will contain new book object including atleast _id and title
     })
 
     .delete(async (req, res) => {
@@ -53,7 +42,6 @@ module.exports = app => {
       } catch (e) {
         res.status(400).send(e);
       }
-      //if successful response will be 'complete delete successful'
     });
 
   app
@@ -66,7 +54,6 @@ module.exports = app => {
       } catch (e) {
         res.status(400).send(e);
       }
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
 
     .post(async (req, res) => {
@@ -83,7 +70,6 @@ module.exports = app => {
       } catch (e) {
         res.status(400).send(e);
       }
-      //json res format same as .get
     })
 
     .delete(async (req, res) => {
@@ -99,6 +85,5 @@ module.exports = app => {
       } catch (e) {
         res.status(400).send(e);
       }
-      //if successful response will be 'delete successful'
     });
 };
