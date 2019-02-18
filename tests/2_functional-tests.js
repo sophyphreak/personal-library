@@ -105,6 +105,7 @@ suite('Functional Tests', () => {
               '_id',
               'Books in array should contain _id'
             );
+            // console.log(res.body);
             done();
           });
       });
@@ -122,10 +123,17 @@ suite('Functional Tests', () => {
           });
       });
 
-      test('Test GET /api/books/[id] with valid id in db', done => {
-        const book = Book.findOne({ title: 'The Alchemsdfist' });
-        // console.log(book);
-        done();
+      test('Test GET /api/books/[id] with valid id in db', async () => {
+        const book = await Book.findOne({ title: 'The Alchemist' });
+        const id = book._id;
+        chai
+          .request(server)
+          .get(`/api/books/${id}`)
+          .end((err, res) => {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.title, 'The Alchemist');
+            assert.isArray(res.body.comments, 'comments should be an array');
+          });
       });
     });
 
