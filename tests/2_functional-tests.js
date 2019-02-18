@@ -6,74 +6,113 @@
  *
  */
 
-var chaiHttp = require('chai-http');
-var chai = require('chai');
-var assert = chai.assert;
-var server = require('../server');
+const chaiHttp = require('chai-http');
+const chai = require('chai');
+const assert = chai.assert;
+const server = require('../server');
+require('../db/mongoose');
+const { Book } = require('../models/book');
 
 chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
-  /*
-   * ----[EXAMPLE TEST]----
-   * Each test should completely test the response of the API end-point including response status code!
-   */
-  test('#example Test GET /api/books', done => {
-    chai
-      .request(server)
-      .get('/api/books')
-      .end((err, res) => {
-        assert.equal(res.status, 200);
-        assert.isArray(res.body, 'response should be an array');
-        assert.property(
-          res.body[0],
-          'commentcount',
-          'Books in array should contain commentcount'
-        );
-        assert.property(
-          res.body[0],
-          'title',
-          'Books in array should contain title'
-        );
-        assert.property(
-          res.body[0],
-          '_id',
-          'Books in array should contain _id'
-        );
-        done();
-      });
+  beforeEach(async done => {
+    const alchemist = new Book({
+      title: 'The Alchemist',
+      comments: ['Great book', 'Seriously. Underrated']
+    });
+    alchemist.save();
+    const zhuangzi = new Book({
+      title: 'Zhuangzi',
+      comments: ['Best book ever']
+    });
+    zhuangzi.save();
+    done();
   });
-  /*
-   * ----[END of EXAMPLE TEST]----
-   */
+
+  afterEach(async done => {
+    Book.deleteMany({}, err => {
+      if (err) console.log('error', err);
+    });
+    done();
+  });
 
   suite('Routing tests', () => {
     suite(
       'POST /api/books with title => create book object/expect book object',
       () => {
         test('Test POST /api/books with title', done => {
-          //done();
+          const title = 'Intercultural Communication: A Discourse Approach';
+          chai
+            .request(server)
+            .post('/api/books')
+            .type('form')
+            .send({
+              _method: 'post',
+              title: title
+            })
+            .end((err, res) => {
+              assert.equal(res.status, 200);
+              assert.isObject(res.body, 'response should be an object');
+              assert.equal(res.body.title, title, 'title should be correct');
+              assert.property(res.body, '_id', 'Book should contain _id');
+              done();
+            });
         });
 
         test('Test POST /api/books with no title given', done => {
-          //done();
+          const title = '';
+          chai
+            .request(server)
+            .post('/api/books')
+            .type('form')
+            .send({
+              _method: 'post',
+              title: title
+            })
+            .end((err, res) => {
+              assert.equal(res.status, 400);
+              done();
+            });
         });
       }
     );
 
     suite('GET /api/books => array of books', () => {
       test('Test GET /api/books', done => {
-        //done();
+        chai
+          .request(server)
+          .get('/api/books')
+          .end((err, res) => {
+            assert.equal(res.status, 200);
+            assert.isArray(res.body, 'response should be an array');
+            assert.property(
+              res.body[0],
+              'commentcount',
+              'Books in array should contain commentcount'
+            );
+            assert.property(
+              res.body[0],
+              'title',
+              'Books in array should contain title'
+            );
+            assert.property(
+              res.body[0],
+              '_id',
+              'Books in array should contain _id'
+            );
+            done();
+          });
       });
     });
 
     suite('GET /api/books/[id] => book object with [id]', () => {
       test('Test GET /api/books/[id] with id not in db', done => {
-        //done();
+        done();
       });
 
       test('Test GET /api/books/[id] with valid id in db', done => {
-        //done();
+        done();
       });
     });
 
@@ -81,7 +120,7 @@ suite('Functional Tests', () => {
       'POST /api/books/[id] => add comment/expect book object with id',
       () => {
         test('Test POST /api/books/[id] with comment', done => {
-          //done();
+          done();
         });
       }
     );
