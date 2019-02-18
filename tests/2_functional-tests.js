@@ -108,7 +108,13 @@ suite('Functional Tests', () => {
 
     suite('GET /api/books/[id] => book object with [id]', () => {
       test('Test GET /api/books/[id] with id not in db', done => {
-        done();
+        chai
+          .request(server)
+          .get('/api/books/0000000')
+          .end((err, res) => {
+            assert.equal(res.status, 400);
+            done();
+          });
       });
 
       test('Test GET /api/books/[id] with valid id in db', done => {

@@ -62,6 +62,7 @@ module.exports = app => {
       try {
         const id = req.params.id;
         const book = await Book.findById(id);
+        if (!book) throw 'Book ID not found.';
         res.send(book);
       } catch (e) {
         res.status(400).send(e);
