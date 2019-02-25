@@ -126,14 +126,10 @@ suite('Functional Tests', () => {
       test('Test GET /api/books/[id] with valid id in db', async () => {
         const book = await Book.findOne({ title: 'The Alchemist' });
         const id = book._id;
-        chai
-          .request(server)
-          .get(`/api/books/${id}`)
-          .end((err, res) => {
-            assert.equal(res.status, 200);
-            assert.equal(res.body.title, 'The Alchemist');
-            assert.isArray(res.body.comments, 'comments should be an array');
-          });
+        const res = await chai.request(server).get(`/api/books/${id}`);
+        assert.equal(res.status, 200);
+        assert.equal(res.body.title, 'The Alchemist');
+        assert.isArray(res.body.comments, 'comments should be an array');
       });
     });
 
